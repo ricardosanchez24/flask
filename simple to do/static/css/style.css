@@ -1,0 +1,19 @@
+body{
+    background-color: rgb(255, 255, 255);
+}
+h1,h2,h3{
+    text-align: center;
+}
+form{
+    text-align: center;
+}
+ul{
+    text-align: center;
+    list-style: none;
+}
+li{
+    padding: 4px;
+}
+.boton{
+    margin-top: 4px;
+}

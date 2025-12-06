@@ -1,0 +1,14 @@
+h1{
+    text-align: center;
+}
+
+.prueba{
+    color: blueviolet;
+    text-transform: uppercase;
+    padding-top: 14rem;
+}
+.prueba--apodo{
+    color: rgb(184, 134, 11);
+    text-align: center;
+    margin-top: 2rem;
+}

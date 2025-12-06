@@ -1,0 +1,17 @@
+{% extends './base.html' %}
+
+{% block title %} {{ data.titulo }} {% endblock %}
+
+{% block body %}
+
+<h1 class="prueba">{{ data.autor }}</h1>
+<h2 class="prueba--apodo">{{ data.apodo }}</h2>
+
+{% if data.numero_lista > 2 %}
+<ul>
+    {% for i in data.lista %}
+       <li>{{ i }}</li>
+    {% endfor %}   
+</ul>
+{% endif %}
+{% endblock %}

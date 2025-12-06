@@ -1,0 +1,41 @@
+{% extends './base.html' %}
+
+{% block body %}
+  <h1>To Do</h1>
+<ul> 
+  {% for tarea in tareas %}
+  <li
+    {% if tarea.completada %}
+        style="text-decoration: line-through; color: gray;"
+    {% endif %}
+  >
+    {{ tarea.contenido }}
+  </li>
+  <form class="boton" method="post" action="{{ url_for('eliminar_tarea', id_tarea = tarea.id) }}" >
+     <button  type="submit">borrar</button>
+  </form>
+
+  <form method="post" action="{{ url_for('completar_tarea', tarea_id = tarea.id) }}">
+
+    <button class="boton" type="submit">
+      {% if tarea.completada %}
+        deshacer
+      {% else %}
+        marcar como completada  
+      {% endif %}
+    </button>
+  </form>
+
+
+  {% endfor %}  
+</ul> 
+
+<form action="" method="post">
+
+    <label for="tarea"> agregar tarea:</label>
+    <input type="text"  name="tarea">
+
+    <button type="submit">enviar</button>
+</form>
+
+{% endblock %}
