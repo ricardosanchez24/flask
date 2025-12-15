@@ -1,0 +1,70 @@
+{% extends './base.html' %}
+
+{% block body %}
+<div class="div_flex">
+    <h2>Crear Cuenta Nueva</h2>
+    
+    <form id="form-registro" class="div_grid barra">
+        
+        <label for="nombre">Nombre de Usuario:</label>
+        <input type="text" id="nombre" name="nombre" required placeholder="Ej: JuanPerez">
+        
+        <label for="password">Contraseña:</label>
+        <input type="password" id="password" name="password" required placeholder="Tu contraseña segura">
+        
+        <button type="submit">Registrarse</button>
+    </form>
+
+    <p id="mensaje-error" style="color: red; text-align: center; font-weight: bold;"></p>
+</div>
+
+<script>
+    // 1. Seleccionamos el formulario del HTML para poder vigilarlo
+    const formulario = document.getElementById('form-registro');
+    
+    // 2. Escuchamos cuando alguien intenta enviarlo (evento 'submit')
+    formulario.addEventListener('submit', async function(evento) {
+        
+        // 3. ¡ALTO! Evitamos que el navegador recargue la página (comportamiento por defecto)
+        evento.preventDefault(); 
+        
+        // 4. Capturamos lo que el usuario escribió en las cajitas
+        const nombreUsuario = document.getElementById('nombre').value;
+        const passwordUsuario = document.getElementById('password').value;
+
+        try {
+            // 5. Enviamos los datos a tu Backend (Python) usando 'fetch'
+            const respuesta = await fetch('/registro', {
+                method: 'POST', // Usamos POST porque vamos a guardar datos
+                headers: {
+                    'Content-Type': 'application/json' // Le avisamos que enviamos JSON
+                },
+                // Aquí convertimos los datos a texto JSON para que viajen por internet
+                // OJO: Las claves ('nombre', 'contraseña') deben coincidir con lo que pusiste en app.py
+                body: JSON.stringify({
+                    nombre: nombreUsuario,
+                    contraseña: passwordUsuario 
+                })
+            });
+
+            // 6. Esperamos la respuesta del servidor y la leemos
+            const datosRespuesta = await respuesta.json();
+
+            if (respuesta.ok) {
+                // SI TODO SALIÓ BIEN (Código 200 o 201):
+                alert('¡Usuario creado con éxito! Ahora vamos a iniciar sesión.');
+                window.location.href = '/ingresar'; // Redirigimos a la página de login
+            } else {
+                // SI HUBO ERROR (Ej: Usuario ya existe):
+                // Mostramos el mensaje de error que nos mandó Python
+                document.getElementById('mensaje-error').innerText = datosRespuesta.mensaje;
+            }
+
+        } catch (error) {
+            // Si falla la conexión o el servidor está apagado
+            console.error('Error:', error);
+            document.getElementById('mensaje-error').innerText = 'Error de conexión con el servidor.';
+        }
+    });
+</script>
+{% endblock %}

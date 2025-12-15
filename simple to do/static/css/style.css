@@ -1,19 +1,114 @@
-body{
-    background-color: rgb(255, 255, 255);
-}
-h1,h2,h3{
+header {
+    background-color: #686868;
+    color: white;
     text-align: center;
+    padding: 30px;
+    font-size: 24px;
+    width: 100%;
+    text-transform: uppercase;
+    margin-bottom: 30px; /* Añadido un margen inferior para separarlo del contenido */
 }
-form{
-    text-align: center;
+
+body {
+    background-color: #a3a2a2; /* Mantenemos tu color de fondo */
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
 }
-ul{
-    text-align: center;
+
+/* ---------------------------------------------------- */
+/* ESTILOS PARA LA SECCIÓN DE AGREGAR TAREA (Input Superior) */
+/* ---------------------------------------------------- */
+.agg_tareas {
+    margin-top: 20px;
+    /* Usamos Flexbox para centrar el formulario */
+    display: flex; 
+    justify-content: center;
+    gap: 10px; /* Espacio entre los elementos del formulario (Label, Input, Botón) */
+    padding: 0 20px; /* Padding a los lados para que no se pegue en pantallas pequeñas */
+}
+
+.agg_tareas input[type="text"] {
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
+    width: 250px; /* Ancho fijo o puedes usar flex-grow: 1 si quieres que se estire */
+}
+
+.agg_tareas button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #555555; /* Un color para el botón de enviar */
+    color: white;
+    font-weight: bold;
+}
+
+
+/* ---------------------------------------------------- */
+/* ESTILOS PARA LA LISTA DE TAREAS (LAS TARJETAS) */
+/* ---------------------------------------------------- */
+
+/* El contenedor principal de la lista, lo usamos para centrar las tareas */
+.posiciones {
+    display: flex;
+    justify-content: center; /* Centra el bloque <ul> en la pantalla */
+}
+
+.posiciones ul {
+    /* Quitamos el estilo de lista (puntos) y padding por defecto */
     list-style: none;
+    padding: 0; 
+    width: 500px; /* Un ancho fijo para las tarjetas (ajusta esto si quieres que sean más anchas) */
+    max-width: 90%; /* Asegura que no se salga de la pantalla en móviles */
+    margin-top: 20px;
 }
-li{
-    padding: 4px;
+
+/* El elemento DIV que envuelve CADA TAREA (LA TARJETA COMPLETA) */
+.tarea-fila-card { 
+    /* Estructura Flexbox para la fila: Texto a la izquierda, Botones a la derecha */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    /* Estilo de Tarjeta */
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra para que destaque del fondo gris */
+
+    /* Tus colores (AJUSTA ESTO) */
+    background-color: #e0e0e0; /* Un gris más claro para la tarjeta */
+    color: #333333;
 }
-.boton{
-    margin-top: 4px;
+
+/* El texto de la tarea */
+.tarea-texto {
+    font-size: 1.1em;
+    max-width: 65%; /* Para que los botones siempre tengan espacio a la derecha */
 }
+
+/* El grupo de botones (contenedor de Borrar y Completar) */
+.botones {
+    display: flex;
+    gap: 10px; /* Espacio entre los botones */
+}
+
+/* Estilos para los botones dentro de las tareas */
+.botones button {
+    /* Tus estilos base que aplicaban a .boton */
+    margin: 0; /* Quitamos los márgenes arriba/abajo que tenías */
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    /* Tus colores para los botones */
+    background-color: #686868; 
+    color: white;
+}
+
+/* Reglas antiguas eliminadas o modificadas: */
+/* .li: Ya no se usa directamente, lo reemplazamos por .tarea-fila-card y .tarea-texto */
+/* .boton: La regla margin-bottom/top: 10px se movió y mejoró dentro de .botones button */
