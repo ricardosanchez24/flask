@@ -108,7 +108,10 @@ body {
     background-color: #686868; 
     color: white;
 }
-
+/*.cerrar_secion{
+    text-align: right;
+    margin-right: 40px;
+}*/
 /* Reglas antiguas eliminadas o modificadas: */
 /* .li: Ya no se usa directamente, lo reemplazamos por .tarea-fila-card y .tarea-texto */
 /* .boton: La regla margin-bottom/top: 10px se movió y mejoró dentro de .botones button */

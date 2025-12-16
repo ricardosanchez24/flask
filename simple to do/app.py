@@ -1,22 +1,36 @@
 # Importa los módulos necesarios de la biblioteca Flask
-from flask import Flask, render_template, url_for, redirect, request
+from flask import Flask, render_template, url_for, redirect, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
-
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, set_access_cookies, unset_jwt_cookies
 
 # 1. Inicialización de la Aplicación
 app = Flask(__name__) 
 
 # 2. Almacén de Datos
+app.config['JWT_TOKEN_LOCATION'] = ['cookies']
+app.config['SECRET_KEY'] = 'mi_clave_secreta'
+app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 
 app.config['SQLALCHEMY_DATABASE_URI'] =  'mysql+pymysql://root:123456789@localhost/lista_tareas'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+jwt = JWTManager(app)
+
+class Usuario(db.Model):
+     id = db.Column(db.Integer, primary_key = True)
+     nombre = db.Column(db.String(50), nullable = False, unique = True)
+     contraseña = db.Column(db.String(260), nullable = False)
+     
+     def __repr__(self):
+          return f'usuario: {self.nombre} '
 
 class Tarea(db.Model):
      id = db.Column(db.Integer, primary_key = True)
      contenido = db.Column(db.String(200), nullable = True)
      completada = db.Column(db.Boolean, default = False)
+     id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable = True)
      
      def __repr__(self):
           return f'tarea: {self.id} '
@@ -24,21 +38,23 @@ class Tarea(db.Model):
 # 3. Definición de la Ruta Principal (Home)
 
 @app.route('/', methods = ['POST','GET'])
+@jwt_required()
 def formulario_backend():
-
+    usuario_actual = int(get_jwt_identity())
     if request.method == 'POST':
         nueva_tarea = request.form.get('tarea')
         if nueva_tarea:
-            nueva_tarea_db = Tarea(contenido=nueva_tarea) 
+            nueva_tarea_db = Tarea(contenido=nueva_tarea, id_usuario=usuario_actual) 
             db.session.add(nueva_tarea_db)
             db.session.commit()
         
         return redirect(url_for('formulario_backend'))
 
-    tareas_db = Tarea.query.all()
+    tareas_db = Tarea.query.filter_by(id_usuario=usuario_actual).all()
     return render_template('index.html', tareas=tareas_db)
 
 @app.route('/eliminar/<int:id_tarea>', methods = ['POST'])
+
 def eliminar_tarea(id_tarea):
         
         tarea_eliminar = Tarea.query.get_or_404(id_tarea)
@@ -56,7 +72,51 @@ def completar_tarea(tarea_id):
 
     db.session.commit()
  
-    return redirect(url_for('formulario_backend'))                  
+    return redirect(url_for('formulario_backend'))     
+
+@app.route('/registro', methods = ['POST','GET'])
+def registro_usuario():
+    
+    if request.method == 'POST':
+        
+        nombre = request.form.get('nombre')
+        contraseña = request.form.get('contraseña')
+        
+        if nombre and contraseña:
+            contraseña_encriptada = generate_password_hash(contraseña)
+            nuevo_usuario_db = Usuario(nombre=nombre, contraseña=contraseña_encriptada) 
+            db.session.add(nuevo_usuario_db)
+            db.session.commit()
+        
+        return redirect(url_for('login_usuario'))
+
+    return render_template('registro.html')  
+
+@app.route('/login', methods = ['POST','GET'])
+def login_usuario():
+    
+    if request.method == 'POST':
+        
+        nombre = request.form.get('nombre')
+        contraseña = request.form.get('contraseña')
+        
+        usuario_db = Usuario.query.filter_by(nombre=nombre).first()
+        
+        if usuario_db and check_password_hash(usuario_db.contraseña, contraseña):
+            token_acceso = create_access_token(identity=str(usuario_db.id))
+            respuesta = redirect(url_for('formulario_backend'))
+            set_access_cookies(respuesta, token_acceso)
+            return respuesta 
+        else:
+            return "Credenciales inválidas. Inténtalo de nuevo."
+
+    return render_template('login.html')               
+
+@app.route('/logout', methods=['POST'])
+def logout_usuario():
+    respuesta = redirect(url_for('login_usuario'))
+    unset_jwt_cookies(respuesta)
+    return respuesta
 
 if __name__ == '__main__':
     with app.app_context():

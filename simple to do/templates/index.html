@@ -1,5 +1,6 @@
 {% extends './base.html' %}
 
+
 {% block body %}
 
 <form class="agg_tareas" action="" method="post">
@@ -9,6 +10,15 @@
 
     <button type="submit">enviar</button>
 </form>
+
+<div class="cerras_secion"style="text-align: right; margin-bottom: 15px; margin-right: 40px;">
+    <span style="margin-right: 10px;">Hola, Usuario</span>
+    <form action="{{ url_for('logout_usuario') }}" method="post" style="display: inline;">
+        <button type="submit" style="background-color: #d9534f; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+            Cerrar Sesión
+        </button>
+    </form>
+</div>
 
 <div class="posiciones">   
     <ul> 
