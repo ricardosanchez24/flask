@@ -1,8 +1,8 @@
 {% extends './base.html' %}
 
 {% block body %}
-<div class="posiciones">
-    <div class="tarea-fila-card" style="display: block; width: 300px; text-align: center;">
+<div class="contenedor-tarjeta">
+    <div class="tarea-fila-card" style="display: block; text-align: center;">
         <h2>Registro</h2>
         <form action="{{ url_for('registro_usuario') }}" method="post" style="display: flex; flex-direction: column; gap: 15px;">
             
