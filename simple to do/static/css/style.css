@@ -148,3 +148,91 @@ header {
         width: 100%;
     }
 }
+
+/* =========================================
+   ESTILOS ESPECÍFICOS PARA LOGIN Y REGISTRO
+   ========================================= */
+
+.tarjeta-auth {
+    background-color: #e0e0e0;
+    
+    /* CONTROL DE TAMAÑO Y POSICIÓN */
+    max-width: 400px;       /* Ancho máximo fijo para que no se estire en PC */
+    width: 90%;             /* En celular ocupará el 90% de la pantalla */
+    margin: 50px auto;      /* 'auto' a los lados es lo que lo CENTRA en la pantalla */
+    
+    /* ESTÉTICA */
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Sombra suave */
+}
+
+/* Inputs dentro del login/registro */
+.tarjeta-auth input[type="text"],
+.tarjeta-auth input[type="password"] {
+    width: 100%;            /* Ocupa todo el ancho de la tarjeta (400px max) */
+    padding: 12px;          /* Más espacio interno para que se vea moderno */
+    margin-bottom: 15px;    /* Separación entre inputs */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Evita que el padding rompa el diseño */
+}
+
+/* Botón del login/registro */
+.tarjeta-auth button {
+    width: 100%;            /* Botón ancho completo */
+    padding: 12px;
+    background-color: #555555;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.tarjeta-auth button:hover {
+    background-color: #333;
+}
+
+/* =========================================
+   ESTILOS PARA MENSAJES DE ERROR
+   ========================================= */
+
+.h1_500{
+    text-align: center;
+    margin-top: 50px;
+    font-size: 48px;
+    color: #d9534f;
+}
+.h1_404{
+    text-align: center;
+    margin-top: 50px;
+    font-size: 48px;
+    color: #e69b32;
+}
+
+/* =========================================
+   ESTILOS PARA MENSAJES FLASH (ALERTAS)
+   ========================================= */
+.alerta {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+/* Estilo para errores (categoría "error") */
+.alerta-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Estilo para éxito (categoría "exito") */
+.alerta-exito {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}

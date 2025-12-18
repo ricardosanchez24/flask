@@ -1,8 +1,9 @@
 # Importa los módulos necesarios de la biblioteca Flask
-from flask import Flask, render_template, url_for, redirect, request, jsonify, make_response
+from flask import Flask, render_template, url_for, redirect, request, jsonify, make_response, flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, set_access_cookies, unset_jwt_cookies
+from sqlalchemy.exc import IntegrityError
 
 # 1. Inicialización de la Aplicación
 app = Flask(__name__) 
@@ -45,8 +46,12 @@ def formulario_backend():
         nueva_tarea = request.form.get('tarea')
         if nueva_tarea:
             nueva_tarea_db = Tarea(contenido=nueva_tarea, id_usuario=usuario_actual) 
-            db.session.add(nueva_tarea_db)
-            db.session.commit()
+            try:
+                db.session.add(nueva_tarea_db)
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
+                return "Error al agregar la tarea. Inténtalo de nuevo."    
         
         return redirect(url_for('formulario_backend'))
 
@@ -85,9 +90,17 @@ def registro_usuario():
         if nombre and contraseña:
             contraseña_encriptada = generate_password_hash(contraseña)
             nuevo_usuario_db = Usuario(nombre=nombre, contraseña=contraseña_encriptada) 
-            db.session.add(nuevo_usuario_db)
-            db.session.commit()
-        
+            try:
+                db.session.add(nuevo_usuario_db)
+                db.session.commit()
+            except IntegrityError: #error de integridad de datos (por corrupcion,inconsistencia,duplicacion)
+                db.session.rollback()
+                return "El nombre de usuario ya existe. Por favor, elige otro."
+            except Exception as e: #error general
+                db.session.rollback()
+                return f"Error al registrar el usuario: {str(e)}"
+                
+        flash('Registro exitoso. Por favor, inicia sesión.')
         return redirect(url_for('login_usuario'))
 
     return render_template('registro.html')  
@@ -108,7 +121,8 @@ def login_usuario():
             set_access_cookies(respuesta, token_acceso)
             return respuesta 
         else:
-            return "Credenciales inválidas. Inténtalo de nuevo."
+            flash('Nombre de usuario o contraseña incorrectos. Inténtalo de nuevo.')
+            return redirect(url_for('login_usuario'))
 
     return render_template('login.html')               
 
@@ -117,6 +131,24 @@ def logout_usuario():
     respuesta = redirect(url_for('login_usuario'))
     unset_jwt_cookies(respuesta)
     return respuesta
+
+@app.errorhandler(404)
+def pagina_no_encontrada(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def error_interno_del_servidor(e):
+    return render_template('500.html'), 500
+
+@jwt.expired_token_loader # Cuando el token ha expirado
+def token_expirado(jwt_header, jwt_payload):
+    # Redirigir al login si la sesión caducó
+    return redirect(url_for('login_usuario'))
+
+@jwt.unauthorized_loader # Cuando no hay token presente
+def sin_token(razon):
+    # Si intenta entrar sin cookie, mandarlo al login
+    return redirect(url_for('login_usuario'))
 
 if __name__ == '__main__':
     with app.app_context():
